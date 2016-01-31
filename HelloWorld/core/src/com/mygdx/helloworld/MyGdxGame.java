@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MyGdxGame extends ApplicationAdapter {
     SpriteBatch batch;
     Texture img;
     BitmapFont font;
+    Sprite sprite;
     int i = 1;
     int position = 0;
     
@@ -19,6 +21,8 @@ public class MyGdxGame extends ApplicationAdapter {
     public void create () {
         batch = new SpriteBatch();
         font = new BitmapFont();
+        img = new Texture(Gdx.files.internal("jet.png"));
+        sprite = new Sprite(img);
         font.setColor(Color.RED);
     }
 
@@ -41,7 +45,8 @@ public class MyGdxGame extends ApplicationAdapter {
             i = 0;
         else if (position == 0)
             i = 1;
-                
+        sprite.setPosition(position, Gdx.graphics.getHeight()/4);
+        sprite.draw(batch);
         batch.end();
     }
 
