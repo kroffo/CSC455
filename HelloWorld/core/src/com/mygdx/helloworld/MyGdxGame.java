@@ -18,11 +18,8 @@ import com.badlogic.gdx.utils.Timer.Task;
 
 public class MyGdxGame extends ApplicationAdapter {
     SpriteBatch batch;
-    //Texture texture;
-    //Pixmap pixmap;
-    TextureAtlas textureAtlas;
-    //BitmapFont font;
-    Sprite sprite;
+    TextureAtlas invader1Atlas, invader2Atlas, invader3Atlas;
+    Sprite[][] invaders = new Sprite[5][11];
     int screenWidth, screenHeight, i = 1, position = 0,
         currentFrame = 0;
     String currentAtlasKey = new String("0001");
@@ -30,23 +27,14 @@ public class MyGdxGame extends ApplicationAdapter {
     @Override
     public void create () {
         batch = new SpriteBatch();
-        textureAtlas = new TextureAtlas(Gdx.files.internal("Sprites/Invader1.atlas"));
-        
-        AtlasRegion region = textureAtlas.findRegion("0001");
-        sprite = new Sprite(region);
-        sprite.setPosition(120,100);
-        sprite.scale(2.5f);
-        Timer.schedule(new Task() {
-                @Override
-                public void run() {
-                    if (++currentFrame > 19)
-                        currentFrame = 0;
-                    currentAtlasKey = "000" + (currentFrame/10 + 1);
-                    sprite.setRegion(textureAtlas.findRegion(currentAtlasKey));
-                }
-            },0,1/30.0f);
-        // font = new BitmapFont();
-        // font.setColor(Color.RED);
+        invader1Atlas = new TextureAtlas(Gdx.files.internal("Sprites/Invader" + 1 + ".atlas"));
+        invader2Atlas = new TextureAtlas(Gdx.files.internal("Sprites/Invader" + 2 + ".atlas"));
+        invader3Atlas = new TextureAtlas(Gdx.files.internal("Sprites/Invader" + 3 + ".atlas"));
+        generateRow(1);
+        generateRow(2);
+        generateRow(3);
+        generateRow(4);
+        generateRow(5);
     }
 
     @Override
@@ -54,15 +42,22 @@ public class MyGdxGame extends ApplicationAdapter {
         batch.dispose();
         //font.dispose();
         //texture.dispose();
-        textureAtlas.dispose();
+        invader1Atlas.dispose();
+        invader2Atlas.dispose();
+        invader3Atlas.dispose();
     }
     
     @Override
     public void render () {
+        currentFrame++;
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        sprite.draw(batch);
+        for (int i = 0; i < 5; i++)
+            for (Sprite sprite : invaders[i]) {
+                sprite.draw(batch);
+                
+            }
         batch.end();
     }
 
@@ -77,5 +72,44 @@ public class MyGdxGame extends ApplicationAdapter {
 
     @Override
     public void resume() {}
-    
+
+    public void generateRow(int row) {
+        final TextureAtlas textureAtlas;
+        switch (row) {
+        case 1:
+            textureAtlas = invader3Atlas;
+            break;
+        case 2:
+            textureAtlas = invader1Atlas;
+            break;
+        case 3:
+            textureAtlas = invader1Atlas;
+            break;
+        case 4:
+            textureAtlas = invader2Atlas;
+            break;
+        case 5:
+            textureAtlas = invader2Atlas;
+            break;
+        default: return;
+        }
+        AtlasRegion region = textureAtlas.findRegion("0001");
+        for (int i = 0; i < 11; i++) {
+            invaders[row-1][i] = new Sprite(region);
+            final Sprite sprite = invaders[row-1][i];
+            sprite.setPosition(120 + i*40, 500 - 40*row);
+            sprite.scale(1.5f);
+            Timer.schedule(new Task() {
+                    @Override
+                    public void run() {
+                        if (currentFrame > 19)
+                            currentFrame = 0;
+                        currentAtlasKey = "000" + (currentFrame/10 + 1);
+                        sprite.setRegion(textureAtlas.findRegion(currentAtlasKey));
+                    }
+                },0,1/30.0f);
+            // font = new BitmapFont();
+            // font.setColor(Color.RED);
+        }
+    }
 }
