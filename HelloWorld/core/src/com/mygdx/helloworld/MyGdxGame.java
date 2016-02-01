@@ -5,67 +5,63 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 
 public class MyGdxGame extends ApplicationAdapter {
     SpriteBatch batch;
-    Texture texture;
-    Pixmap pixmap;
-    BitmapFont font;
+    //Texture texture;
+    //Pixmap pixmap;
+    TextureAtlas textureAtlas;
+    //BitmapFont font;
     Sprite sprite;
-    int screenWidth, screenHeight, i = 1, position = 0;;
+    int screenWidth, screenHeight, i = 1, position = 0,
+        currentFrame = 0;
+    String currentAtlasKey = new String("0001");
     
     @Override
     public void create () {
         batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.RED);
-        pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
-
+        textureAtlas = new TextureAtlas(Gdx.files.internal("Sprites/Invader1.atlas"));
         
-        pixmap.setColor(Color.BLACK);
-        
-        pixmap.fillRectangle(6,8,2,6);
-        pixmap.fillRectangle(8,12,2,4);
-        pixmap.fillRectangle(10,8,2,10);
-        pixmap.fillRectangle(10,20,2,2);
-        pixmap.fillRectangle(12,6,4,2);
-        pixmap.fillRectangle(18,6,4,2);
-        pixmap.fillRectangle(12,10,10,4);
-        pixmap.fillRectangle(14,10,6,2);
-        pixmap.fillRectangle(12,10,10,2);
-        pixmap.fillRectangle(12,18,2,2);
-        pixmap.fillRectangle(20,18,2,2);
-        pixmap.fillRectangle(22,20,2,2);
-        pixmap.fillRectangle(14,14,6,2);
-        pixmap.fillRectangle(12,16,10,2);
-        pixmap.fillRectangle(22,8,2,10);
-        pixmap.fillRectangle(24,12,2,4);
-        pixmap.fillRectangle(26,8,2,6);
-        
-        texture = new Texture(pixmap);
-        pixmap.dispose();
-        sprite = new Sprite(texture);
+        AtlasRegion region = textureAtlas.findRegion("0001");
+        sprite = new Sprite(region);
+        sprite.setPosition(120,100);
+        sprite.scale(2.5f);
+        Timer.schedule(new Task() {
+                @Override
+                public void run() {
+                    if (++currentFrame > 19)
+                        currentFrame = 0;
+                    currentAtlasKey = "000" + (currentFrame/10 + 1);
+                    sprite.setRegion(textureAtlas.findRegion(currentAtlasKey));
+                }
+            },0,1/30.0f);
+        // font = new BitmapFont();
+        // font.setColor(Color.RED);
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        font.dispose();
-        texture.dispose();
+        //font.dispose();
+        //texture.dispose();
+        textureAtlas.dispose();
     }
     
     @Override
     public void render () {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        sprite.setPosition(100,100);
-        sprite.draw(batch);
-        sprite.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         sprite.draw(batch);
         batch.end();
     }
