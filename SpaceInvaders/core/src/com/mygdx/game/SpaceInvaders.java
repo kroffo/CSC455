@@ -1,4 +1,4 @@
-package com.mygdx.helloworld;
+package com.mygdx.game;
 
 import java.util.Random;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -14,7 +14,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.audio.Sound;
 
-public class MyGdxGame extends ApplicationAdapter {
+
+public class SpaceInvaders extends ApplicationAdapter {
     Random randy = new Random();
     SpriteBatch batch;
     Sprite[][][] invaderSprites;
@@ -143,7 +144,7 @@ public class MyGdxGame extends ApplicationAdapter {
                 invaderSprites[i][j][0].setOrigin(invaderSprites[i][j][0].getWidth()/2, invaderSprites[i][j][0].getHeight()/2);
                 invaderSprites[i][j][1].setScale(2f,2f);
                 invaderSprites[i][j][1].setOrigin(invaderSprites[i][j][1].getWidth()/2, invaderSprites[i][j][1].getHeight()/2);
-                                invaders[i][j] = true;
+                invaders[i][j] = true;
             }
         }
         for (int i = 3; i < 5; i++) {
@@ -154,7 +155,7 @@ public class MyGdxGame extends ApplicationAdapter {
                 invaderSprites[i][j][0].setOrigin(invaderSprites[i][j][0].getWidth()/2, invaderSprites[i][j][0].getHeight()/2);
                 invaderSprites[i][j][1].setScale(2f,2f);
                 invaderSprites[i][j][1].setOrigin(invaderSprites[i][j][1].getWidth()/2, invaderSprites[i][j][1].getHeight()/2);
-                                invaders[i][j] = true;
+                invaders[i][j] = true;
             }
         }
         invaderBullets = new Sprite[10];
@@ -302,7 +303,7 @@ public class MyGdxGame extends ApplicationAdapter {
                 if (Gdx.input.isKeyPressed(Input.Keys.R)) {
                     if (Gdx.input.isKeyPressed(Input.Keys.E)) {
                         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                                changeColor("r");
+                            changeColor("r");
                         }
                     }
                 }
@@ -527,7 +528,7 @@ public class MyGdxGame extends ApplicationAdapter {
         return null;
     }
 
-        private Sprite spriteShotByInvader(Sprite bulletShot) {
+    private Sprite spriteShotByInvader(Sprite bulletShot) {
         Rectangle bulletBox = bulletShot.getBoundingRectangle();
         if (collisionCheck(playerShip.getBoundingRectangle(),bulletBox)) {
             return playerShip;
@@ -601,7 +602,7 @@ public class MyGdxGame extends ApplicationAdapter {
         alienTraveling = false;
         gameOver = false;
         for (int j = 0; j < 10; j++) {
-                invaderBulletsShot[i] = false;
+            invaderBulletsShot[i] = false;
         }
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 11; j++) {
@@ -678,5 +679,4 @@ public class MyGdxGame extends ApplicationAdapter {
         for (int i = 0; i < 10; i++)
             invaderBulletsShot[i] = false;
     }
-    
 }
