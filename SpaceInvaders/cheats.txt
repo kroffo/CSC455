@@ -1,0 +1,13 @@
+Cheat           Activate        Deactivate
+
+Fast            f e d           f e o
+
+Vertical        w h m           w h o
+Movement
+
+fully           a o n           a o f
+automatic
+
+                b l u e
+change color    g r e n
+                r e d
