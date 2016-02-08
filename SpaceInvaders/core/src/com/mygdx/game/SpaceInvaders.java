@@ -44,7 +44,7 @@ public class SpaceInvaders extends ApplicationAdapter {
     boolean[] invaderBulletsShot;
     Sprite[] autoModeBullets;
     boolean[] autoModeBulletsShot;
-    float elapsedTime = 0, nextTime;
+    float elapsedTime = 0, nextTime, movementRate = 2;
     int screenWidth, screenHeight, i = 1, state,
         currentFrame, horizontalBase = 120, verticalBase = 400,
         barrierHeight = 170, numberAlive = 55, stepSize = 5, maxAutoBullets = 150,
@@ -53,7 +53,7 @@ public class SpaceInvaders extends ApplicationAdapter {
     String currentAtlasKey = new String("0001");
     boolean headingLeft = true, bulletShot = false, alienCrossedLeft = false,
         alienTraveling = false, gameOver = false, shipDied = false, pause = false,
-        autoMode = false;
+        autoMode = false, whyMode = false;
     Sound shootSound, explosionSound, invaderShootSound, playerExplodeSound;
     
     @Override
@@ -343,10 +343,18 @@ public class SpaceInvaders extends ApplicationAdapter {
                     }
                     if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
                         if (playerShip.getX() > 20)
-                            playerShip.translateX(-2f);
+                            playerShip.translateX(-1f * movementRate);
                     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
                         if (playerShip.getX() < screenWidth - 20)
-                            playerShip.translateX(2f);
+                            playerShip.translateX(1f * movementRate);
+                    if (whyMode) {
+                        if (Gdx.input.isKeyPressed(Input.Keys.UP))
+                            if (playerShip.getY() < screenHeight - 20)
+                                playerShip.translateY(1f * movementRate);
+                        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+                            if (playerShip.getY() > 10)
+                                playerShip.translateY(-1f * movementRate);
+                    }
                     if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                         if (!autoMode) {
                             if (!bulletShot) {
@@ -401,6 +409,34 @@ public class SpaceInvaders extends ApplicationAdapter {
                         if (Gdx.input.isKeyPressed(Input.Keys.O)) {
                             if (Gdx.input.isKeyPressed(Input.Keys.F)) {
                                 autoMode = false;
+                            }
+                        }
+                    }
+                    if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+                        if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+                            if (Gdx.input.isKeyPressed(Input.Keys.M)) {
+                                whyMode = true;
+                            }
+                        }
+                    }
+                    if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+                        if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+                            if (Gdx.input.isKeyPressed(Input.Keys.O)) {
+                                whyMode = false;
+                            }
+                        }
+                    }
+                    if (Gdx.input.isKeyPressed(Input.Keys.F)) {
+                        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+                            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                                movementRate = 5;
+                            }
+                        }
+                    }
+                    if (Gdx.input.isKeyPressed(Input.Keys.F)) {
+                        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+                            if (Gdx.input.isKeyPressed(Input.Keys.O)) {
+                                movementRate = 2;
                             }
                         }
                     }
