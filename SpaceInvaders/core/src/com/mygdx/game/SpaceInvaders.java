@@ -42,15 +42,18 @@ public class SpaceInvaders extends ApplicationAdapter {
     boolean[][] invaders;
     Sprite[] invaderBullets;
     boolean[] invaderBulletsShot;
+    Sprite[] autoModeBullets;
+    boolean[] autoModeBulletsShot;
     float elapsedTime = 0, nextTime;
     int screenWidth, screenHeight, i = 1, state,
         currentFrame, horizontalBase = 120, verticalBase = 400,
-        barrierHeight = 170, numberAlive = 55, stepSize = 5,
+        barrierHeight = 170, numberAlive = 55, stepSize = 5, maxAutoBullets = 150,
         displayExplosion, level, playerHeight = 80, shootRate,
         killedSinceIncreaseInShootRate, scoreValue = 0, displayShipsplosion;
     String currentAtlasKey = new String("0001");
     boolean headingLeft = true, bulletShot = false, alienCrossedLeft = false,
-        alienTraveling = false, gameOver = false, shipDied = false, pause = false;
+        alienTraveling = false, gameOver = false, shipDied = false, pause = false,
+        autoMode = false;
     Sound shootSound, explosionSound, invaderShootSound, playerExplodeSound;
     
     @Override
@@ -164,6 +167,12 @@ public class SpaceInvaders extends ApplicationAdapter {
             invaderBullets[i] = new Sprite(new Texture(Gdx.files.internal("Sprites/Bullet.png")));
             invaderBulletsShot[i] = false;
         }
+        autoModeBullets = new Sprite[maxAutoBullets];
+        autoModeBulletsShot = new boolean[maxAutoBullets];
+        for (int i = 0; i < maxAutoBullets; i++) {
+            autoModeBullets[i] = new Sprite(new Texture(Gdx.files.internal("Sprites/Bullet.png")));
+            autoModeBulletsShot[i] = false;
+        }
         displacementX = invaderSprites[0][0][0].getWidth()*2;
         initializeLevel();
     }
@@ -275,6 +284,9 @@ public class SpaceInvaders extends ApplicationAdapter {
                 for (int i = 0; i < 10; i++) {
                     invaderBulletsShot[i] = false;
                 }
+                for (int i = 0; i < maxAutoBullets; i++) {
+                    autoModeBulletsShot[i] = false;
+                }
                 bulletShot = false;
                 for (int i = 0; i < barriers.length; i++) {
                     for (int j = 0; j < 10; j++) {
@@ -336,10 +348,21 @@ public class SpaceInvaders extends ApplicationAdapter {
                         if (playerShip.getX() < screenWidth - 20)
                             playerShip.translateX(2f);
                     if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                        if (!bulletShot) {
-                            bullet.setPosition(playerShip.getX(), playerShip.getY());
-                            bulletShot = true;
-                            shootSound.play(0.5f);
+                        if (!autoMode) {
+                            if (!bulletShot) {
+                                bullet.setPosition(playerShip.getX(), playerShip.getY());
+                                bulletShot = true;
+                                shootSound.play(0.5f);
+                            }
+                        } else {
+                            for (int i = 0; i < maxAutoBullets; i++) {
+                                if (!autoModeBulletsShot[i]) {
+                                    autoModeBulletsShot[i] = true;
+                                    autoModeBullets[i].setPosition(playerShip.getX(), playerShip.getY());
+                                    shootSound.play(0.5f);
+                                    break;
+                                }
+                            }
                         }
                     }
                     if (Gdx.input.isKeyPressed(Input.Keys.B)) {
@@ -364,6 +387,20 @@ public class SpaceInvaders extends ApplicationAdapter {
                                 if (Gdx.input.isKeyPressed(Input.Keys.N)) {
                                     changeColor("g");
                                 }
+                            }
+                        }
+                    }
+                    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                        if (Gdx.input.isKeyPressed(Input.Keys.O)) {
+                            if (Gdx.input.isKeyPressed(Input.Keys.N)) {
+                                autoMode = true;
+                            }
+                        }
+                    }
+                    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                        if (Gdx.input.isKeyPressed(Input.Keys.O)) {
+                            if (Gdx.input.isKeyPressed(Input.Keys.F)) {
+                                autoMode = false;
                             }
                         }
                     }
@@ -392,54 +429,109 @@ public class SpaceInvaders extends ApplicationAdapter {
                             }
                         }
                     }
-                    if (bulletShot) {
-                        Sprite collided = spriteShotByPlayer(state);
-                        if (collided != null) {
-                            if (collided == alienShip) {
-                                int thousands = scoreValue / 1000;
-                                scoreValue += 50;
-                                if (thousands < scoreValue / 1000) lives++;
-                                alienTraveling = false;
-                                displayExplosion++;
-                                explosion.setPosition(collided.getX(), collided.getY());
-                                explosion.draw(batch);
-                                alienShip.setPosition(-30,420);
-                                bulletShot = false;
-                                explosionSound.play(1.0f);
-                            }
-                            for (int i = 0; i < 4; i++) {
-                                for (int j = 0; j < 10; j++) {
-                                    if (collided == barrierPosition[i][j][0]) {
-                                        barriers[i][j]++;
-                                        bulletShot = false;
-                                        explosionSound.play(1.0f);
+                    if (!autoMode) {
+                        if (bulletShot) {
+                            Sprite collided = spriteShotByPlayer(bullet, state);
+                            if (collided != null) {
+                                if (collided == alienShip) {
+                                    int thousands = scoreValue / 1000;
+                                    scoreValue += 50;
+                                    if (thousands < scoreValue / 1000) lives++;
+                                    alienTraveling = false;
+                                    displayExplosion++;
+                                    explosion.setPosition(collided.getX(), collided.getY());
+                                    explosion.draw(batch);
+                                    alienShip.setPosition(-30,420);
+                                    bulletShot = false;
+                                    explosionSound.play(1.0f);
+                                }
+                                for (int i = 0; i < 4; i++) {
+                                    for (int j = 0; j < 10; j++) {
+                                        if (collided == barrierPosition[i][j][0]) {
+                                            barriers[i][j]++;
+                                            bulletShot = false;
+                                            explosionSound.play(1.0f);
+                                        }
                                     }
                                 }
+                                for (int i = 0; i < 5; i++) {
+                                    for (int j = 0; j < 11; j++) {
+                                        if (collided == invaderSprites[i][j][state]) {
+                                            increaseScore(i);
+                                            invaders[i][j] = false;
+                                            bulletShot = false;
+                                            numberAlive--;
+                                            displayExplosion++;
+                                            explosionSound.play(1.0f);
+                                            explosion.setPosition(collided.getX(), collided.getY());
+                                            explosion.draw(batch);
+                                            if (j == leftMost) calculateLeftMost();
+                                            else if (j == rightMost) calculateRightMost();
+                                            if (collided == invaderSprites[bottomMostI][bottomMostJ][state]) calculateBottomMost();
+                                            break;
+                                        }
+                                    }
+                                }
+                            } else {
+                                bullet.translateY(4f);
+                                if (bullet.getY() > 440)
+                                    bulletShot = false;
+                                else
+                                    bullet.draw(batch);
                             }
-                            for (int i = 0; i < 5; i++) {
-                                for (int j = 0; j < 11; j++) {
-                                    if (collided == invaderSprites[i][j][state]) {
-                                        increaseScore(i);
-                                        invaders[i][j] = false;
-                                        bulletShot = false;
-                                        numberAlive--;
+                        }
+                    } else {
+                        for (int k = 0; k < maxAutoBullets; k++) {
+                            if (autoModeBulletsShot[k]) {
+                                Sprite collided = spriteShotByPlayer(autoModeBullets[k], state);
+                                if (collided != null) {
+                                    if (collided == alienShip) {
+                                        int thousands = scoreValue / 1000;
+                                        scoreValue += 50;
+                                        if (thousands < scoreValue / 1000) lives++;
+                                        alienTraveling = false;
                                         displayExplosion++;
-                                        explosionSound.play(1.0f);
                                         explosion.setPosition(collided.getX(), collided.getY());
                                         explosion.draw(batch);
-                                        if (j == leftMost) calculateLeftMost();
-                                        else if (j == rightMost) calculateRightMost();
-                                        if (collided == invaderSprites[bottomMostI][bottomMostJ][state]) calculateBottomMost();
-                                        break;
+                                        alienShip.setPosition(-30,420);
+                                        autoModeBulletsShot[k] = false;
+                                        explosionSound.play(1.0f);
                                     }
+                                    for (int i = 0; i < 4; i++) {
+                                        for (int j = 0; j < 10; j++) {
+                                            if (collided == barrierPosition[i][j][0]) {
+                                                barriers[i][j]++;
+                                                autoModeBulletsShot[k] = false;
+                                                explosionSound.play(1.0f);
+                                            }
+                                        }
+                                    }
+                                    for (int i = 0; i < 5; i++) {
+                                        for (int j = 0; j < 11; j++) {
+                                            if (collided == invaderSprites[i][j][state]) {
+                                                increaseScore(i);
+                                                invaders[i][j] = false;
+                                                autoModeBulletsShot[k] = false;
+                                                numberAlive--;
+                                                displayExplosion++;
+                                                explosionSound.play(1.0f);
+                                                explosion.setPosition(collided.getX(), collided.getY());
+                                                explosion.draw(batch);
+                                                if (j == leftMost) calculateLeftMost();
+                                                else if (j == rightMost) calculateRightMost();
+                                                if (collided == invaderSprites[bottomMostI][bottomMostJ][state]) calculateBottomMost();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    autoModeBullets[k].translateY(4f);
+                                    if (autoModeBullets[k].getY() > 440)
+                                        autoModeBulletsShot[k] = false;
+                                    else
+                                        autoModeBullets[k].draw(batch);
                                 }
                             }
-                        } else {
-                            bullet.translateY(4f);
-                            if (bullet.getY() > 440)
-                                bulletShot = false;
-                            else
-                                bullet.draw(batch);
                         }
                     }
                     playerShip.draw(batch);
@@ -561,8 +653,8 @@ public class SpaceInvaders extends ApplicationAdapter {
         return numberAlive/(55.0f + 20*level);
     }
 
-    private Sprite spriteShotByPlayer(int state) {
-        Rectangle bulletBox = bullet.getBoundingRectangle();
+    private Sprite spriteShotByPlayer(Sprite bulletShot, int state) {
+        Rectangle bulletBox = bulletShot.getBoundingRectangle();
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 11; j++) {
                 if (invaders[i][j] && collisionCheck(invaderSprites[i][j][state].getBoundingRectangle(),bulletBox)) {
@@ -733,5 +825,7 @@ public class SpaceInvaders extends ApplicationAdapter {
         bulletShot = false;
         for (int i = 0; i < 10; i++)
             invaderBulletsShot[i] = false;
+        for (int i = 0; i < maxAutoBullets; i++)
+            autoModeBulletsShot[i] = false;
     }
 }
