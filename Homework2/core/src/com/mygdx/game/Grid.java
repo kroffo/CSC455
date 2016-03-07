@@ -9,6 +9,7 @@ public class Grid {
     Teleporter teleporters[];
     Cell end;
     PriorityQueue<Path> queue = new PriorityQueue<Path>(100000);
+    boolean pathFinding;
     
     public Grid(Cell[][] cells) {
         this.cells = cells;
@@ -33,7 +34,8 @@ public class Grid {
      */
     public Path findPath(Cell start, Cell e) {
         Path current;
-        if (queue.size() == 0) {
+        if (queue.size() == 0 && !pathFinding) {
+            pathFinding = true;
             this.end = e;
             current = new Path(start, this);
             for (Cell neighbor : current.getHead().getNeighbors()) {
@@ -46,6 +48,10 @@ public class Grid {
                     queue.add(new Path(current, neighbor, this));
                 }
             }
+        }
+        if (queue.size() == 0) {
+            end = null;
+            return new Path(new Terrain(0), this);
         }
         current = queue.poll();
         Cell c = current.getHead();
@@ -118,6 +124,7 @@ public class Grid {
     }
 
     private void resetPathFinding() {
+        pathFinding = false;
         for (Cell[] row : cells) {
             for (Cell cell : row) {
                 cell.resetPathFindingVariables();
@@ -128,6 +135,7 @@ public class Grid {
     }
 
     public void resetStates() {
+        pathFinding = false;
         for (Cell[] row : cells) {
             for (Cell cell : row) {
                 cell.resetPathFindingVariables();

@@ -54,18 +54,24 @@ public class MyGdxGame extends ApplicationAdapter {
         handleInput();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             if (!clicked) {
                 select(Gdx.input.getX(),Gdx.input.getY());
                 clicked = true;
             }
-        } else
+        } else {
             clicked = false;
-        if (pathFinding && ++count > 1) {
+        }
+        if (pathFinding && ++count > 0) {
             count = 0;
             Path path = grid.findPath(selection1, selection2);
             if (path != null) {
-                cross(path);
+                if (path.getHead() == selection2) {
+                    cross(path);
+                } else {
+                    selection1.badSelect();
+                    selection2.badSelect();
+                }
                 selection1 = null;
                 selection2 = null;
                 pathFinding = false;

@@ -9,14 +9,15 @@ public abstract class Cell {
 
     private ArrayList<Cell> neighbors = new ArrayList<Cell>(0);
     private String text;
-    protected boolean visited, crossed, selected;
-    protected Sprite unvisitedSprite, visitedSprite, crossedSprite, selectedSprite;
+    protected boolean visited, crossed, selected, badSelect;
+    protected Sprite unvisitedSprite, visitedSprite, crossedSprite, selectedSprite, badSelectSprite;
 
     public Cell(String text) {
         unvisitedSprite = new Sprite(new Texture(Gdx.files.internal("Sprites/unvisited.png")));
         visitedSprite = new Sprite(new Texture(Gdx.files.internal("Sprites/visited.png")));
         crossedSprite = new Sprite(new Texture(Gdx.files.internal("Sprites/crossed.png")));
         selectedSprite = new Sprite(new Texture(Gdx.files.internal("Sprites/selected.png")));
+        badSelectSprite = new Sprite(new Texture(Gdx.files.internal("Sprites/badselect.png")));
         this.text = text;
     }
 
@@ -28,12 +29,15 @@ public abstract class Cell {
         visitedSprite.setPosition(x, y);
         crossedSprite.setPosition(x, y);
         selectedSprite.setPosition(x, y);
+        badSelectSprite.setPosition(x, y);
     }
 
     /* returns the correct sprite to draw based on the last path found */
     public Sprite getSprite() {
         if (selected)
             return selectedSprite;
+        else if (badSelect)
+            return badSelectSprite;
         else if (!visited)
             return unvisitedSprite;
         else if (crossed)
@@ -48,8 +52,14 @@ public abstract class Cell {
         return selected;
     }
 
+    public void badSelect() {
+        selected = false;
+        badSelect = true;
+    }
+
     public void deselect() {
         selected = false;
+        badSelect = false;
     }
 
     public void addNeighbor(Cell neighbor) {

@@ -20,7 +20,9 @@ public class Teleporter extends Cell {
     /* returns the correct sprite to draw based on the last path found */
     @Override
     public Sprite getSprite() {
-        if (super.selected)
+        if (super.badSelect)
+            return super.badSelectSprite;
+        else if (super.selected)
             return super.selectedSprite;
         else if (!super.visited)
             return super.unvisitedSprite;
