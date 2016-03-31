@@ -8,14 +8,18 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.input.GestureDetector.GestureListener;
 
-public class MyGdxGame extends ApplicationAdapter {
+public class MyGdxGame extends ApplicationAdapter implements GestureListener {    
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private BitmapFont font;
@@ -31,6 +35,12 @@ public class MyGdxGame extends ApplicationAdapter {
     
     @Override
     public void create () {
+        
+        switch (Gdx.app.getType()) {
+        case Android:
+            Gdx.input.setInputProcessor(new GestureDetector(this));
+        }
+        
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         screenHeight = Gdx.graphics.getHeight();
@@ -40,11 +50,7 @@ public class MyGdxGame extends ApplicationAdapter {
         createGridFromFile(inputFile);
         setNeighborReferencesForGrid(cellGrid);
         grid = new Grid(cellGrid);
-        
-        
-        
         camera = new OrthographicCamera(screenHeight, screenWidth);
-        
     }
 
     @Override
@@ -234,5 +240,51 @@ public class MyGdxGame extends ApplicationAdapter {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean touchDown(float x, float y, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean tap(float x, float y, int count, int button) {
+        select((int)x,(int)y);
+        return false;
+    }
+
+    @Override
+    public boolean longPress(float x, float y) {
+        return false;
+    }
+
+    @Override
+    public boolean fling(float velocityX, float velocityY, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean pan(float x, float y, float deltaX, float deltaY) {
+        camera.translate(deltaX, deltaY);
+        return false;
+    }
+
+    @Override
+    public boolean panStop(float x, float y, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean zoom (float originalDistance, float currentDistance) {
+        camera.zoom += originalDistance - currentDistance;
+       return false;
+    }
+
+    @Override
+    public boolean pinch (Vector2 initialFirstPointer, Vector2 initialSecondPointer, Vector2 firstPointer, Vector2 secondPointer){
+        float originalDistance = Math.abs(initialSecondPointer.dst(initialFirstPointer));
+        float currentDistance = Math.abs(secondPointer.dst(firstPointer));
+        camera.zoom -= originalDistance - currentDistance;
+       return false;
     }
 }
