@@ -16,7 +16,7 @@ public class Armor extends Item {
     }
 	
     public String toString() {
-        String rv = getName() + "\t~ " + "DEF:" + getDefense();
+        String rv = getName() + " ~ " + "DEF: " + getDefense();
         if (this.isEquipped()) {
             rv = rv + "  (EQUIPPED)";
         }

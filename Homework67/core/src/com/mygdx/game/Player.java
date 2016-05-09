@@ -11,27 +11,43 @@ public class Player extends Creature {
         PLAY,
         PAUSE,
         LOOT,
-        FIGHT
+        FIGHT,
+        EXAMINE,
+        DOOR,
+        PEEK
     }
     
     private static Player player;
     private int wins;
     private int maxHealth;
     private State state = State.PLAY;
+    private Room room;
+    private Room peekRoom;
+    private int peekFrames;
+    private Chest lootChest;
+    private Enemy examinee;
+    private Door door;
 
-    private Player(Sprite s, Tile l, String name, Armor[] initialArms, Weapon[] initialWeapons, Key[] initialKeys) {
-        super(s, l, name, 10, 4, 2, 20, 20, initialArms, initialWeapons, initialKeys, 2);
+    private Player(Sprite s, Sprite fs, Tile l, Room r, String name, Armor[] initialArms, Weapon[] initialWeapons, Key[] initialKeys) {
+        super(s, fs, l, name, 10, 4, 2, 20, 20, initialArms, initialWeapons, initialKeys, 2);
+        room = r;
         initialArms = null;
+        lootChest = null;
+        orientation = 0;
     }
 
-    public static void createPlayer(Sprite s, Tile l, String name, Armor[] initialArms, Weapon[] initialWeapons, Key[] initialKeys) {
+    public static void createPlayer(Sprite s, Sprite fs, Tile l, Room r, String name, Armor[] initialArms, Weapon[] initialWeapons, Key[] initialKeys) {
         if (Player.getPlayer() == null) {
-            player = new Player(s, l, name, initialArms, initialWeapons, initialKeys);
+            player = new Player(s, fs, l, r, name, initialArms, initialWeapons, initialKeys);
         }
     }
 
     public static Player getPlayer() {
         return player;
+    }
+
+    public Room getRoom() {
+        return room;
     }
 
     public State getState() {
@@ -41,21 +57,139 @@ public class Player extends Creature {
     public void setState(State s) {
         state = s;
     }
+    
+    public void lootChest(Chest c) {
+        lootChest = c;
+        state = State.LOOT;
+    }
 
-    public void select(Item i) {
+    public void removeLootChest() {
+        lootChest = null;
+        state = State.PLAY;
+    }
+
+    public Chest getLootChest() {
+        return lootChest;
+    }
+
+    public void examineEnemy(Enemy e) {
+        examinee = e;
+        state = State.EXAMINE;
+    }
+
+    public void removeExaminee() {
+        examinee = null;
+        state = State.PLAY;
+    }
+
+    public Enemy getExaminee() {
+        return examinee;
+    }
+
+    public void examineDoor(Door d) {
+        door = d;
+        state = State.DOOR;
+    }
+
+    public void removeDoor() {
+        door = null;
+        state = State.PLAY;
+    }
+    
+    public Door getDoor() {
+        return door;
+    }
+
+    public void startFight() {
+        if (examinee == null)
+            state = State.PLAY;
+        else
+            state = State.FIGHT;
+    }
+
+    public void select(MenuItem m) {
+        Item i = m.getItem();
         if (i instanceof Weapon) {
             if (state == State.PAUSE) {
-                equipWeapon(i.getName());
-            } else if (state == State.LOOT) {
-                
+                if (i.isEquipped())
+                    unequipWeapon(i.getName());
+                else 
+                    equipWeapon(i.getName());
             }
         } else if (i instanceof Armor) {
             if (state == State.PAUSE) {
-                equipArmor(i.getName());
-            } else if (state == State.LOOT) {
-                
+                if (i.isEquipped())
+                    unequipArmor(i.getName());
+                else
+                    equipArmor(i.getName());
+            } 
+        } else if (state == State.DOOR) {
+            if (m.toString().equalsIgnoreCase("Enter")) {
+                boolean doorUnlocked = false;
+                if (door.isLocked()) {
+                    if (satchel.containsKey(door.getCorrectKeyName())) {
+                        door.unlock();
+                        satchel.removeKey(door.getCorrectKeyName());
+                        doorUnlocked = true;
+                    }
+                } else {
+                    doorUnlocked = true;
+                }
+                if (doorUnlocked) {
+                    Tile newLocation = door.getOtherTile(room);
+                    Room newRoom = newLocation.getRoom();
+                    location.removeOccupant();
+                    newLocation.setOccupant(this);
+                    room.removeOccupant(this);
+                    newRoom.addOccupant(this);
+                    location = newLocation;
+                    room = newRoom;
+                }
+                state = State.PLAY;
+            } else if (m.toString().equalsIgnoreCase("Peek")) {
+                boolean doorUnlocked = false;
+                if (door.isLocked()) {
+                    if (satchel.containsKey(door.getCorrectKeyName())) {
+                        door.unlock();
+                        satchel.removeKey(door.getCorrectKeyName());
+                        doorUnlocked = true;
+                    }
+                } else {
+                    doorUnlocked = true;
+                }
+                if (doorUnlocked) {
+                    peekRoom = door.getOtherTile(room).getRoom();
+                    peekFrames = 0;
+                    state = State.PEEK;
+                } else {
+                    state = State.PLAY;
+                }
             }
         }
+    }
+    
+    public void select(LootItem m) {
+        Item i = m.getItem();
+        if (i instanceof Weapon) {
+            if (state == State.LOOT) {
+                takeWeaponFromChest(lootChest, i.getName());
+            }
+        } else if (i instanceof Armor) {
+            if (state == State.LOOT) {
+                takeArmorFromChest(lootChest, i.getName());
+            }
+        } else if (i instanceof Key) {
+            if (state == State.LOOT) {
+                takeKeyFromChest(lootChest, i.getName());
+            }
+        }
+    }
+
+    public Room getPeekRoom() {
+        if (++peekFrames == 100) {
+            state = State.PLAY;
+        }
+        return peekRoom;
     }
     
     public void takeWeaponFromChest(Chest chest, String weaponName) {
@@ -77,7 +211,7 @@ public class Player extends Creature {
     }
 
     public int getLevel() {
-        return wins/5;
+        return wins/5 + 1;
     }
     
 }

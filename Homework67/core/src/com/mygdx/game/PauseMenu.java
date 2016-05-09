@@ -10,31 +10,34 @@ public class PauseMenu extends Menu {
     public PauseMenu() {
         super("Pause Menu");
         Selectable[] options = new Selectable[4];
-        Menu stats = new Menu("Stats");
-        
-        Selectable[] statOpts = new MenuItem[9];
-        Player p = Player.getPlayer();
-        statOpts[0] = new MenuItem("Name: " + p.getName());
-        statOpts[1] = new MenuItem("Level: " + p.getLevel());
-        statOpts[2] = new MenuItem("Health: " + p.getHealth() + "/" + p.getMaxHealth());
-        String weaponString = "Weapon: " + p.getEquippedWeaponName();
-        if (p.getEquippedWeapon() != null)
-            weaponString = weaponString + " (+" + p.getEquippedWeapon().getAttack() + ")";
-        statOpts[3] = new MenuItem(weaponString);
-        statOpts[4] = new MenuItem("Attack: " + p.getAttack());
-        statOpts[5] = new MenuItem("Defense: " + p.getDefense());
-        statOpts[6] = new MenuItem("Strength: " + p.getStrength());
-        statOpts[7] = new MenuItem("Agility: " + p.getAgility());
-        statOpts[8] = new MenuItem("Luck: " + p.getLuck());
-        stats.setOptions(statOpts);
 
-         Menu weaps = new Menu("Weapons");
-        
-        
-        options[0] = stats;
+        Player p = Player.getPlayer();
+
+        Menu weaps = new Menu("Weapons");
+        Weapon[] weapons = p.getWeapons();
+        Selectable[] weapOpts = new MenuItem[weapons.length];
+        for (int i = 0; i < weapons.length; i++)
+            weapOpts[i] = new MenuItem(weapons[i]);
+        weaps.setOptions(weapOpts); 
+
+        Menu arms = new Menu("Armors");
+        Armor[] armors = p.getArmors();
+        Selectable[] armOpts = new MenuItem[armors.length];
+        for (int i = 0; i < armors.length; i++)
+            armOpts[i] = new MenuItem(armors[i]);
+        arms.setOptions(armOpts);
+
+        Menu keys = new Menu("Keys");
+        Key[] kees = p.getKeys();
+        Selectable[] keyOpts = new MenuItem[kees.length];
+        for (int i = 0; i < kees.length; i++)
+            keyOpts[i] = new MenuItem(kees[i]);
+        keys.setOptions(keyOpts);
+
+        options[0] = new StatsMenu();
         options[1] = weaps;
-        options[2] = new Menu("Armor");
-        options[3] = new Menu("Keys");
+        options[2] = arms;
+        options[3] = keys;
         super.setOptions(options);
     }
 }

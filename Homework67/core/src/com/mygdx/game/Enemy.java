@@ -9,9 +9,16 @@ public class Enemy extends Creature {
     private String race;
     private boolean searched;
 
-    public Enemy(Sprite s, Tile l, String name, int startHealth, int startStrength, int startDefense, int startAgility,
+    public enum Behavior {
+        FLEE,
+        CHASE,
+        RANDOMSLOW,
+        RANDOMFAST
+    }
+
+    public Enemy(Sprite s, Sprite fs, Tile l, String name, int startHealth, int startStrength, int startDefense, int startAgility,
                  int startLuck, Armor[] initialArmors, Weapon[] initialWeapons, Key[] initialKeys, int speed, String race) {
-        super(s, l, name, startHealth, startStrength, startDefense, startAgility, startLuck, initialArmors, initialWeapons, initialKeys, speed);
+        super(s, fs, l, name, startHealth, startStrength, startDefense, startAgility, startLuck, initialArmors, initialWeapons, initialKeys, speed);
         this.race = race;
         searched = false;
     }

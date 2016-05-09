@@ -26,9 +26,12 @@ public class Creature extends Occupant {
     private Armor shield;
     private Weapon weapon;
 
-    public Creature(Sprite s, Tile l, String name, int startHealth, int startStrength, int startDefense,
+    private Sprite fightSprite;
+
+    public Creature(Sprite s, Sprite fs, Tile l, String name, int startHealth, int startStrength, int startDefense,
                     int startAgility, int startLuck, Armor[] initialArmors, Weapon[] initialWeapons, Key[] initialKeys, int speed) {
         super(s, l);
+        this.fightSprite = fs;
         this.name = name;
         this.health = startHealth;
         this.maxHealth = startHealth;
@@ -59,14 +62,18 @@ public class Creature extends Occupant {
     }
 
     public boolean step() {
-        Vector2 target = new Vector2(location.getSprite().getX(), location.getSprite().getY());
-        Vector2 position = new Vector2(sprite.getX(), sprite.getY());
-        Vector2 velocity = target.sub(position).nor().scl(traversalSpeed);
-        sprite.translate(velocity.x, velocity.y);
-        target = new Vector2(location.getSprite().getX(), location.getSprite().getY());
-        position = new Vector2(sprite.getX(), sprite.getY());
-        if ((target.sub(position)).len() < 0.1)
-            transitioning = false;
+        if (transitioning) {
+            Vector2 target = new Vector2(location.getSprite().getX(), location.getSprite().getY());
+            Vector2 position = new Vector2(sprite.getX(), sprite.getY());
+            Vector2 velocity = target.sub(position).nor().scl(traversalSpeed);
+            sprite.translate(velocity.x, velocity.y);
+            target = new Vector2(location.getSprite().getX(), location.getSprite().getY());
+            position = new Vector2(sprite.getX(), sprite.getY());
+            if ((target.sub(position)).len() < 0.1)
+                transitioning = false;
+        } else {
+            sprite.setPosition(location.getSprite().getX(), location.getSprite().getY());
+        }
         return !transitioning;
     }
 
@@ -84,19 +91,24 @@ public class Creature extends Occupant {
         if (arm != null) {
             String type = arm.getType();
             if (type.equals("Shirt")) {
-                unequipArmor(shirt);
+                if (shirt != null)
+                    unequipArmor(shirt.getName());
                 shirt = arm;
             } else if (type.equals("Pants")) {
-                unequipArmor(pants);
+                if (pants != null)
+                    unequipArmor(pants.getName());
                 pants = arm;
             } else if (type.equals("Boots")) {
-                unequipArmor(boots);
+                if (boots != null)
+                    unequipArmor(boots.getName());
                 boots = arm;
             } else if (type.equals("Gloves")) {
-                unequipArmor(gloves);
+                if (gloves != null)
+                    unequipArmor(gloves.getName());
                 gloves = arm;
             } else if (type.equals("Shield")) {
-                unequipArmor(shield);
+                if (shield != null)
+                    unequipArmor(shield.getName());
                 shield= arm;
             }
             arm.equip();
@@ -106,7 +118,8 @@ public class Creature extends Occupant {
         return false;
     }
 	
-    public void unequipArmor(Armor arm) {
+    public void unequipArmor(String armorName) {
+        Armor arm = satchel.getArmor(armorName);
         if (arm != null) {
             arm.unequip();
             defense -= arm.getDefense();
@@ -116,7 +129,8 @@ public class Creature extends Occupant {
     public boolean equipWeapon(String weaponName) {
         Weapon weap = satchel.getWeapon(weaponName);
         if (weap != null) {
-            unequipWeapon(weapon);
+            if (weapon != null)
+                unequipWeapon(weapon.getName());
             weap.equip();
             weapon = weap;
             attack += weap.getAttack();
@@ -125,7 +139,8 @@ public class Creature extends Occupant {
         return false;
     }
     
-    public void unequipWeapon(Weapon weap) {
+    public void unequipWeapon(String weaponName) {
+        Weapon weap = satchel.getWeapon(weaponName);
         if (weap != null) {
             weap.unequip();
             attack -= weap.getAttack();

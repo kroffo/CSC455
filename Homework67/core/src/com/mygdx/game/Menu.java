@@ -13,8 +13,8 @@ import java.util.ArrayList;
 
 public class Menu implements Selectable {
     
-    private ArrayList<String> options;
-    private ArrayList<Selectable> selectables;
+    private String[] options;
+    private Selectable[] selectables;
     private BitmapFont font;
     private ShapeRenderer renderer;
     private String title, selectionTitle;
@@ -26,9 +26,9 @@ public class Menu implements Selectable {
     
     public Menu(String t) {
         title = t;
-        options = new ArrayList<String>(0);
-        options.add("Exit");
-        selectables = new ArrayList<Selectable>(0);
+        options = new String[1];
+        options[0] = "Exit";
+        selectables = new Selectable[0];
         selection = 0;
         renderer = new ShapeRenderer();
         font = new BitmapFont();
@@ -43,6 +43,35 @@ public class Menu implements Selectable {
         selectionMade = false;
         selectedMenu = null;
         selectionTitle = title;
+        updateValues();
+    }
+
+    public void updateValues() {
+        for (int i = 0; i < selectables.length; i++)
+            options[i] = selectables[i].toString();
+    }
+
+    public void removeIndex(int i) {
+        if (i < 0 || i >= selectables.length)
+            return;
+        String[] opts = new String[options.length - 1];
+        Selectable[] selects = new Selectable[selectables.length - 1];
+        boolean passed = false;
+        for (int j = 0; j < selects.length; j++) {
+            if (j == i)
+                passed = true;
+            if (passed) {
+                opts[j] = options[j+1];
+                selects[j] = selectables[j+1];
+            } else {
+                opts[j] = options[j];
+                selects[j] = selectables[j];
+            }
+        }
+        opts[opts.length-1] = "Exit";
+        options = opts;
+        selectables = selects;
+        updateValues();
     }
 
     public void selectByMenu(String prefix) {
@@ -50,13 +79,13 @@ public class Menu implements Selectable {
     }
 
     public void setOptions(Selectable[] ops) {
-        options = new ArrayList<String>(0);
-        selectables = new ArrayList<Selectable>(0);
-        for (Selectable o : ops) {
-            options.add(o.toString());
-            selectables.add(o);
+        options = new String[ops.length + 1];
+        selectables = new Selectable[ops.length];
+        for (int i = 0; i < ops.length; i++) {
+            options[i] = ops[i].toString();
+            selectables[i] = ops[i];
         }
-        options.add("Exit");
+        options[options.length - 1] = "Exit";
     }
 
     public boolean exited() {
@@ -71,20 +100,29 @@ public class Menu implements Selectable {
                 selectedMenu = null;
             }
         } else {
-            if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 if (!buttonPressed) {
                     buttonPressed = true;
                     selectionMade = true;
-                    if (selection == options.size() - 1)
+                    if (selection == options.length - 1)
                         exitChosen = true;
                     else { /* Handle other options. */
-                        Selectable s = selectables.get(selection);
+                        Selectable s = selectables[selection];
                         if (s instanceof Menu) {
                             selectedMenu = (Menu)s;
                             selectedMenu.reinitialize();
                             selectedMenu.selectByMenu(this.toString() + " - ");
-                        } else if (s instanceof Item) {
-                            Player.getPlayer().select((Item)(selectables.get(selection)));
+                        } else if (s instanceof MenuItem) {
+                            Player.getPlayer().select(((MenuItem)s));
+                            updateValues();
+                        } else if (s instanceof LootItem) {
+                            if (!((LootItem)s).taken()) {
+                                Player.getPlayer().select(((LootItem)s));
+                                removeIndex(selection);
+                            }
+                        } else if (s instanceof FightOption) {
+                            reinitialize();
+                            Player.getPlayer().startFight();
                         }
                     }
                 }
@@ -92,7 +130,7 @@ public class Menu implements Selectable {
                 if (!buttonPressed) {
                     selection++;
                     buttonPressed = true;
-                    if (selection == options.size())
+                    if (selection == options.length)
                         selection = 0;
                 }
             } else if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
@@ -100,7 +138,7 @@ public class Menu implements Selectable {
                     selection--;
                     buttonPressed = true;
                     if (selection == -1)
-                        selection = options.size() - 1;
+                        selection = options.length - 1;
                 }
             } else  {
                 buttonPressed = false;
@@ -117,18 +155,16 @@ public class Menu implements Selectable {
             renderer.rect(20, 20, Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight() - 40);
             renderer.setColor(Color.GRAY);
             renderer.rect(25, 25, Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 50);
-            // renderer.setColor(Color.VIOLET);
-            // renderer.rect(55, Gdx.graphics.getHeight() - 63 - 20*(selection + 1), Gdx.graphics.getWidth() - 130, 15);
             renderer.end();
             batch.begin();
             font.draw(batch, selectionTitle, 40, screenHeight - 40);
-            for (int i = 0; i < options.size(); i++) {
+            for (int i = 0; i < options.length; i++) {
                 if (i == selection) {
                     font.setColor(Color.YELLOW);
-                    font.draw(batch, options.get(i), 60, screenHeight - 70 - 20*i);
+                    font.draw(batch, options[i], 60, screenHeight - 70 - 20*i);
                     font.setColor(Color.BLACK);
                 } else {
-                    font.draw(batch, options.get(i), 60, screenHeight - 70 - 20*i);
+                    font.draw(batch, options[i], 60, screenHeight - 70 - 20*i);
                 }
             }
             batch.end();

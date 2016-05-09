@@ -16,7 +16,7 @@ public class Weapon extends Item {
     }
 	
     public String toString() {
-        String rv = getName() + "\t~ ATK:" + attack + "  Block: " + block;
+        String rv = getName() + " ~ ATK: " + attack + "  Block: " + block;
         if (this.isEquipped()) {
             rv = rv + "  (EQUIPPED)";
         }
