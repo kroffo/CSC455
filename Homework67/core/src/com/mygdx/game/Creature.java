@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class Creature extends Occupant {
+public abstract class Creature extends Occupant {
 
-    private boolean transitioning;
-    private float traversalSpeed;
+    protected boolean transitioning;
+    protected float traversalSpeed;
     protected Satchel satchel;
     private String name;
     private int health, maxHealth;
@@ -61,21 +61,7 @@ public class Creature extends Occupant {
         }
     }
 
-    public boolean step() {
-        if (transitioning) {
-            Vector2 target = new Vector2(location.getSprite().getX(), location.getSprite().getY());
-            Vector2 position = new Vector2(sprite.getX(), sprite.getY());
-            Vector2 velocity = target.sub(position).nor().scl(traversalSpeed);
-            sprite.translate(velocity.x, velocity.y);
-            target = new Vector2(location.getSprite().getX(), location.getSprite().getY());
-            position = new Vector2(sprite.getX(), sprite.getY());
-            if ((target.sub(position)).len() < 0.1)
-                transitioning = false;
-        } else {
-            sprite.setPosition(location.getSprite().getX(), location.getSprite().getY());
-        }
-        return !transitioning;
-    }
+    public abstract boolean step();
 
     public boolean transitioning() {
         return transitioning;
@@ -84,6 +70,10 @@ public class Creature extends Occupant {
     public void setLocation(Tile l) {
         location = l;
         transitioning = true;
+    }
+
+    public Tile getLocation() {
+        return location;
     }
 
     public boolean equipArmor(String armorName) {

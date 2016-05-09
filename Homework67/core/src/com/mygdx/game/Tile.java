@@ -12,13 +12,15 @@ public class Tile {
     private Occupant occupant;
     private Door door;
     private int doorLocation;
+    private int terrain;
 
     /* Array of neighbors, north, south, east and west */
     private Tile[] neighbors = new Tile[4];
 
-    public Tile(Room l, Sprite s) {
+    public Tile(Room l, Sprite s, int t) {
         location = l;
         sprite = s;
+        terrain = t;
     }
 
     public void setNeighbors(Tile n, Tile e, Tile s, Tile w) {
@@ -26,6 +28,10 @@ public class Tile {
         neighbors[1] = e;
         neighbors[2] = s;
         neighbors[3] = w;
+    }
+
+    public int getTerrain() {
+        return terrain;
     }
 
     public void setDoor(Door d, int direction) {
@@ -113,6 +119,77 @@ public class Tile {
             ((Creature)occupant).setLocation(neighbor);
             this.removeOccupant();
         }
+    }
+
+    public int getFurthestAvailableNeighbor(Vector2 pos) {
+        int neighbor = -1;
+        Tile far = this;
+        Vector2 farPos = new Vector2(far.getSprite().getX(), far.getSprite().getY());
+        float farDist = farPos.dst(pos);
+        for (int i = 0; i < neighbors.length; i++) {
+            Tile n = neighbors[i];
+            if (n != null && (!n.occupied())) {
+                Vector2 nPos = new Vector2(n.getSprite().getX(), n.getSprite().getY());
+                float nDist = nPos.dst(pos);
+                if (nDist > farDist) {
+                    neighbor = i;
+                    far = n;
+                    farPos = nPos;
+                    farDist = nDist;
+                }
+            }
+        }
+        return neighbor;
+    }
+
+    public int getNeighborIndex(Tile t) {
+        for (int i = 0; i < neighbors.length; i++)
+            if (neighbors[i] == t)
+                return i;
+        return -1;
+    }
+
+    public int getNextPursuitTile(Tile target) {
+        if (location.containsTile(target)) {
+            Tile[][] tiles = location.getTiles();
+            Cell[][] cells = new Cell[tiles.length][tiles[0].length];
+            for (int i = 0; i < tiles.length; i++) {
+                for (int j = 0; j < tiles[i].length; j++) {
+                    cells[i][j] = new Cell(tiles[i][j]);
+                }
+            }
+            cells[0][0].setNeighbors(cells[0][1], cells[1][0], null, null);
+            cells[0][cells[0].length - 1].setNeighbors(null, cells[1][cells[0].length - 1], cells[0][cells[0].length - 2], null);
+            cells[cells.length - 1][0].setNeighbors(cells[cells.length - 1][1], null, null, cells[cells.length - 2][0]);
+            cells[cells.length - 1][cells[0].length - 1].setNeighbors(null, null, cells[cells.length - 1][cells[0].length - 2], cells[cells.length - 2][cells[0].length - 1]);
+            for (int i = 1; i < cells[0].length - 1; i++) {
+                cells[0][i].setNeighbors(cells[0][i+1], cells[1][i], cells[0][i-1], null);
+            }
+            for (int i = 1; i < cells[0].length - 1; i++) {
+                cells[cells.length - 1][i].setNeighbors(cells[cells.length - 1][i+1], null, cells[cells.length - 1][i-1], cells[cells.length - 2][i]);
+            }
+            for (int i = 1; i < cells.length - 1; i++) {
+                cells[i][0].setNeighbors(cells[i][1], cells[i+1][0], null, cells[i-1][0]);
+            }
+            for (int i = 1; i < cells.length - 1; i++) {
+                cells[i][cells[0].length - 1].setNeighbors(null, cells[i+1][cells[0].length - 1], cells[i][cells[0].length - 2], cells[i-1][cells[0].length - 1]);
+            }
+        
+            for (int i = 1; i < cells.length - 1; i++) {
+                for (int j = 1; j < cells[0].length - 1; j++) {
+                    cells[i][j].setNeighbors(cells[i][j+1], cells[i+1][j], cells[i][j-1], cells[i-1][j]);
+                }
+            }
+            Grid g = new Grid(cells);
+            Cell current = cells[location.getTileX(this)][location.getTileY(this)];
+            Cell targetCell =  cells[location.getTileX(target)][location.getTileY(target)];
+            Path p = g.findPath(current, targetCell);
+            if (p != null) {
+                int neighborIndex = getNeighborIndex(p.getFirstStep().getTile());
+                return neighborIndex;
+            }
+        }
+        return -1;
     }
 
     public void draw(SpriteBatch batch) {

@@ -40,7 +40,7 @@ public class MyGdxGame extends ApplicationAdapter {
         s.addKey(new Key("Blue Key"));
         startRoom.addBarrier(barrierImage,5,1);
         startRoom.addBarrier(barrierImage,2,5);
-        startRoom.addEnemy("TestEnemy.png","TestEnemy.png",1,1,"name",1,2,3,4,5,null,null,null,6,"rat");
+        startRoom.addEnemy("TestPlayer.png","TestEnemy.png",1,1,"name",1,2,3,4,5,null,null,null,1,"rat");
         Door d = new Door("Wooden Door", new Sprite(new Texture("TestChest.png")), startRoom, 0, 3, 3, secondRoom, 8, 3, 1, true, new Key("Blue Key"));
         
     }

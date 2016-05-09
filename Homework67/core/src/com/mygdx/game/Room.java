@@ -24,7 +24,7 @@ public class Room {
                 Sprite s = new Sprite(new Texture(image_name));
                 s.setOrigin(s.getWidth()/2, s.getHeight()/2);
                 s.setPosition((float)(startX + i*s.getWidth()), (float)(startY + j*s.getHeight()));
-                tiles[i][j] = new Tile(this, s);                
+                tiles[i][j] = new Tile(this, s, 1);                
             }
         }
         tiles[0][0].setNeighbors(tiles[0][1], tiles[1][0], null, null);
@@ -51,10 +51,44 @@ public class Room {
         }
     }
 
+    public boolean containsTile(Tile t) {
+        for (int i = 0; i < tiles.length; i++) {
+            for (int j = 0; j < tiles[i].length; j++) {
+                if (tiles[i][j] == t)
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public Tile getTile(int x, int y) {
         if (x < 0 || x > tiles.length || y < 0 || y > tiles[0].length)
             return null;
         return tiles[x][y];
+    }
+
+    public int getTileX(Tile t) {
+        for (int i = 0; i < tiles.length; i++) {
+            for (int j = 0; j < tiles[i].length; j++) {
+                if (tiles[i][j] == t)
+                    return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getTileY(Tile t) {
+        for (int i = 0; i < tiles.length; i++) {
+            for (int j = 0; j < tiles[i].length; j++) {
+                if (tiles[i][j] == t)
+                    return j;
+            }
+        }
+        return -1;
+    }
+
+    protected Tile[][] getTiles() {
+        return tiles;
     }
 
     public void addDoor(Door d, int x, int y, int direction) {
@@ -163,5 +197,4 @@ public class Room {
         for (Occupant o : occupants)
             o.draw(batch);
     }
-    
 }

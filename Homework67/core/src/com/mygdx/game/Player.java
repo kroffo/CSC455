@@ -46,6 +46,23 @@ public class Player extends Creature {
         return player;
     }
 
+    public boolean step() {
+        if (transitioning) {
+            Vector2 target = new Vector2(location.getSprite().getX(), location.getSprite().getY());
+            Vector2 position = new Vector2(sprite.getX(), sprite.getY());
+            Vector2 velocity = target.sub(position).nor().scl(traversalSpeed);
+            sprite.translate(velocity.x, velocity.y);
+            target = new Vector2(location.getSprite().getX(), location.getSprite().getY());
+            position = new Vector2(sprite.getX(), sprite.getY());
+            float dist = (target.sub(position)).len();
+            if (dist < 1)
+                transitioning = false;
+        } else {
+            sprite.setPosition(location.getSprite().getX(), location.getSprite().getY());
+        }
+        return !transitioning;
+    }
+
     public Room getRoom() {
         return room;
     }
