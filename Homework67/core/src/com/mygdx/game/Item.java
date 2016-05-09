@@ -5,30 +5,29 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-
-public abstract class Item {
-	private String name;
-	private boolean equipped;
+public abstract class Item implements Selectable {
+    private String name;
+    private boolean equipped;
 	
-	public Item(String itemName) {
-		name = itemName;
-	}
+    public Item(String itemName) {
+        name = itemName;
+    }
 	
-	public void equip() {
-		equipped = true;
-	}
+    public void equip() {
+        equipped = true;
+    }
 	
-	public void unequip() {
-		equipped = false;
-	}
+    public void unequip() {
+        equipped = false;
+    }
 	
-	public boolean isEquipped() {
-		return equipped;
-	}
+    public boolean isEquipped() {
+        return equipped;
+    }
 	
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 	
-	public abstract String toString();
+    public abstract String toString();
 }

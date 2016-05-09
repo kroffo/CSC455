@@ -63,7 +63,8 @@ public class Room {
             initialArms[0] = new Armor("Cloth Shirt", 0, "Shirt");
             initialArms[1] = new Armor("Cloth Shoes", 0, "Boots");
             initialArms[2] = new Armor("Cloth Pants", 0, "Pants");
-            addition = new Player(s, placement, name, initialArms, null, null);
+            Player.createPlayer(s, placement, name, initialArms, null, null);
+            addition = Player.getPlayer();
             placement.setOccupant(addition);
             occupants.add(addition);
             return addition;

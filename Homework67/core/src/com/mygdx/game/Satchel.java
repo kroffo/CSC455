@@ -17,7 +17,18 @@ public class Satchel {
 	armors = new HashMap<String, Armor>();
 	keys = new HashMap<String, Key>();
     }
-	       
+
+    public Weapon[] getWeapons() {
+        return weapons.values().toArray(new Weapon[weapons.size()]);
+    }
+
+    public Armor[] getArmors() {
+        return armors.values().toArray(new Armor[armors.size()]);
+    }
+
+    public Key[] getKeys() {
+        return keys.values().toArray(new Key[keys.size()]);
+    }
 	
     public void addKey(Key key) {
         if (key != null)

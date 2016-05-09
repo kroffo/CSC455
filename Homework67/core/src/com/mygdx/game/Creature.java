@@ -11,7 +11,7 @@ public class Creature extends Occupant {
     private float traversalSpeed;
     protected Satchel satchel;
     private String name;
-    private int health;
+    private int health, maxHealth;
     private int strength;
     private int attack;
     private int defense;
@@ -31,6 +31,7 @@ public class Creature extends Occupant {
         super(s, l);
         this.name = name;
         this.health = startHealth;
+        this.maxHealth = startHealth;
         this.strength = startStrength;
         this.attack = startStrength;
         this.defense = startDefense;
@@ -130,9 +131,25 @@ public class Creature extends Occupant {
             attack -= weap.getAttack();
         }
     }
+
+    public Weapon[] getWeapons() {
+        return satchel.getWeapons();
+    }
+
+    public Armor[] getArmors() {
+        return satchel.getArmors();
+    }
+
+    public Key[] getKeys() {
+        return satchel.getKeys();
+    }
 	
     public int getHealth() {
         return health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
     }
 	
     public int getAttack() {
