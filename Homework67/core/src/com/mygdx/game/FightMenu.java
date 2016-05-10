@@ -78,18 +78,18 @@ public class FightMenu {
     public void draw(SpriteBatch batch, float screenWidth, float screenHeight) {
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(Color.DARK_GRAY);
-        renderer.rect(20, -10, Gdx.graphics.getWidth() - 40, 60);
+        renderer.rect(20, -10, Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight()/9 + 10);
         renderer.setColor(Color.GRAY);
-        renderer.rect(25, -5, Gdx.graphics.getWidth() - 50, 50);   
+        renderer.rect(25, -5, Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight()/9);
         renderer.end();
         batch.begin();
         for (int i = 0; i < options.length; i++) {
             if (i == selection) {
                 font.setColor(Color.YELLOW);
-                font.draw(batch, options[i], 80 + 150*i, 30);
+                font.draw(batch, options[i], 80 + 150*i, screenHeight/12);
                 font.setColor(Color.BLACK);
             } else {
-                font.draw(batch, options[i], 80 + 150*i, 30);
+                font.draw(batch, options[i], 80 + 150*i, screenHeight/12);
             }
         }
         batch.end();

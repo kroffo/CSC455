@@ -27,13 +27,13 @@ public class FightOutputDisplay {
     public void draw(SpriteBatch batch, float screenWidth, float screenHeight) {
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(Color.DARK_GRAY);
-        renderer.rect(20, -10, Gdx.graphics.getWidth() - 40, 110);
+        renderer.rect(20, -10, Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight()*2/9 + 10);
         renderer.setColor(Color.GRAY);
-        renderer.rect(25, -5, Gdx.graphics.getWidth() - 50, 100);   
+        renderer.rect(25, -5, Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight()*2/9);   
         renderer.end();
         batch.begin();
         for (int i = 0; i < lines.size(); i++) {
-            font.draw(batch, lines.get(i), 80, 90 - i*20);
+            font.draw(batch, lines.get(i), 80,screenHeight*2/9 - 10 - i*20);
         }
         batch.end();
     }

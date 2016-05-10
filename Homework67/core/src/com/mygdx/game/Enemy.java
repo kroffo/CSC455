@@ -63,7 +63,7 @@ public class Enemy extends Creature {
             target = new Vector2(location.getSprite().getX(), location.getSprite().getY());
             position = new Vector2(sprite.getX(), sprite.getY());
             float dist = (target.sub(position)).len();
-            if (dist < 1) {
+            if (dist < traversalSpeed) {
                 transitioning = false;
                 sprite.setPosition(location.getSprite().getX(), location.getSprite().getY());
             }

@@ -30,9 +30,9 @@ public class FightStatsBar {
     public void draw(SpriteBatch batch, float screenWidth, float screenHeight) {
             renderer.begin(ShapeRenderer.ShapeType.Filled);
             renderer.setColor(Color.DARK_GRAY);
-            renderer.rect(20, Gdx.graphics.getHeight() - 80, Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight() + 10);
+            renderer.rect(20, Gdx.graphics.getHeight()*7/9, Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight() + 10);
             renderer.setColor(Color.GRAY);
-            renderer.rect(25, Gdx.graphics.getHeight() - 75, Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() + 10);   
+            renderer.rect(25, Gdx.graphics.getHeight()*7/9 + 5, Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() + 10);   
             renderer.end();
             batch.begin();
 

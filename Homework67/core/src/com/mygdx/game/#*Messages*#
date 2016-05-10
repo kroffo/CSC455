@@ -1,16 +1,3 @@
-Mark activated
-Mark set
-Auto-saving...done
-Mark set
-Undo!
-Mark set [3 times]
-Undo! [24 times]
-Redo!
-Undo!
-Redo! [26 times]
-Mark set [3 times]
-Auto-saving...done
-Mark set [2 times]
 Saving file /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/Room.java...
 Wrote /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/Room.java
 Mark set [4 times]
@@ -997,4 +984,17 @@ Saving file /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/Satche
 Wrote /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/Satchel.java
 Saving file /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/MyGdxGame.java...
 Wrote /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/MyGdxGame.java
+Auto-saving...
+Saving file /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/MyGdxGame.java...
+Wrote /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/MyGdxGame.java
+Saving file /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/PauseMenu.java...
+Wrote /home/kenny/Classes/CSC455/Homework67/core/src/com/mygdx/game/PauseMenu.java
+(No changes need to be saved) [13 times]
+Saving file /home/kenny/Downloads/ProjectBACK/Player.java...
+Wrote /home/kenny/Downloads/ProjectBACK/Player.java
+Undo! [3 times]
+user-error: No further undo information [24 times]
+Saving file /home/kenny/Downloads/ProjectBACK/Player.java...
+Wrote /home/kenny/Downloads/ProjectBACK/Player.java
+(No changes need to be saved) [2 times]
 Auto-saving...

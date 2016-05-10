@@ -10,7 +10,7 @@ public abstract class Creature extends Occupant {
     protected boolean transitioning;
     protected float traversalSpeed;
     protected Satchel satchel;
-    private String name;
+    protected String name;
     private int health, maxHealth;
     private int strength;
     private int attack;
