@@ -81,7 +81,7 @@ public class MyGdxGame extends ApplicationAdapter {
         armors.clear();
         keys.clear();
         
-        Sprite doorSprite = new Sprite(new Texture("TestChest.png"));
+        Sprite doorSprite = new Sprite(new Texture("Door.png"));
         new Door("Brown Door", doorSprite, startRoom, 4, 6, 0, ratRoom, 4, 0, 2, true, new Key("Wooden Key"));
 
         Room practiceRoom = new Room("TestTile.png", screenWidth, screenHeight);
