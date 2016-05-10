@@ -9,6 +9,11 @@ public class StatsMenu extends Menu {
 
     public StatsMenu() {
         super("Stats");
+        updateValues();
+    }
+
+    @Override
+    public void updateValues() {
         Selectable[] statOpts = new MenuItem[9];
         Player p = Player.getPlayer();
         statOpts[0] = new MenuItem("Name: " + p.getName());

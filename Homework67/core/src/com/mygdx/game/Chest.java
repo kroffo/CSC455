@@ -12,13 +12,13 @@ public class Chest extends Occupant {
     private boolean searched;
     private Satchel contents;
 	
-    public Chest(Sprite sprite, Tile location, String chestName, boolean lockState, Key key) {
+    public Chest(Sprite sprite, Tile location, String chestName, boolean lockState, Key key, Satchel satchel) {
         super(sprite, location);
         name = chestName;
         locked = lockState;
         correctKey = key;
         searched = false;
-        contents = new Satchel();
+        contents = satchel;
     }
 	
     public String toString() {

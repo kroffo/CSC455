@@ -97,7 +97,7 @@ public class Room {
         neighboringRooms.add(d.getNeighbor(this));
     }
 
-    public Player addPlayer(String imageName, String fightImageName, int x, int y, String name) {
+    public Player addPlayer(String imageName, String fightImageName, int x, int y, String name, Satchel satchel) {
         Player addition;
         Tile placement = tiles[x][y];
         if (placement.occupied())
@@ -112,10 +112,7 @@ public class Room {
             fs.setPosition(Gdx.graphics.getWidth()/3,Gdx.graphics.getHeight()/3);
 
             Armor[] initialArms = new Armor[3];
-            initialArms[0] = new Armor("Cloth Shirt", 0, "Shirt");
-            initialArms[1] = new Armor("Cloth Shoes", 0, "Boots");
-            initialArms[2] = new Armor("Cloth Pants", 0, "Pants");
-            Player.createPlayer(s, fs, placement, this, name, initialArms, null, null);
+            Player.createPlayer(s, fs, placement, this, name, satchel);
             addition = Player.getPlayer();
             placement.setOccupant(addition);
             occupants.add(addition);
@@ -124,7 +121,7 @@ public class Room {
     }
 
     public Enemy addEnemy(String imageName, String fightImageName, int x, int y, String name, int startHealth, int startStrength, int startDefense, int startAgility,
-                 int startLuck, Armor[] initialArmors, Weapon[] initialWeapons, Key[] initialKeys, int speed, String race) {
+                          int startLuck, Satchel satchel, int speed, String race, String behavior) {
         Enemy addition;
         Tile placement = tiles[x][y];
         if (placement.occupied())
@@ -139,14 +136,14 @@ public class Room {
             fs.setPosition(Gdx.graphics.getWidth()*2/3,Gdx.graphics.getHeight()*2/3);
 
             addition = new Enemy(s, fs, placement, name, startHealth, startStrength, startDefense, startAgility,
-                                 startLuck, initialArmors, initialWeapons, initialKeys, speed, race);
+                                 startLuck, satchel, speed, race, behavior);
             placement.setOccupant(addition);
             occupants.add(addition);
             return addition;
         }
     }
 
-    public Chest addChest(String imageName, int x, int y, String name, boolean lockState, Key key) {
+    public Chest addChest(String imageName, int x, int y, String name, boolean lockState, Key key, Satchel satchel) {
         Chest addition;
         Tile placement = tiles[x][y];
         if (placement.occupied())
@@ -155,7 +152,7 @@ public class Room {
             Sprite s = new Sprite(new Texture(imageName));
             s.setOrigin(s.getWidth()/2, s.getHeight()/2);
             s.setPosition(placement.getSprite().getX(), placement.getSprite().getY());
-            addition = new Chest(s, placement, name, lockState, key);
+            addition = new Chest(s, placement, name, lockState, key, satchel);
             placement.setOccupant(addition);
             occupants.add(addition);
             return addition;

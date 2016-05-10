@@ -32,16 +32,15 @@ public class Player extends Creature {
     private Door door;
     private String fightOption;
 
-    private Player(Sprite s, Sprite fs, Tile l, Room r, String name, Armor[] initialArms, Weapon[] initialWeapons, Key[] initialKeys) {
-        super(s, fs, l, name, 10, 4, 2, 20, 20, initialArms, initialWeapons, initialKeys, 2);
+    private Player(Sprite s, Sprite fs, Tile l, Room r, String name, Satchel satchel) {
+        super(s, fs, l, name, 10, 4, 2, 20, 20, satchel, 2);
         room = r;
-        initialArms = null;
         orientation = 0;
     }
 
-    public static void createPlayer(Sprite s, Sprite fs, Tile l, Room r, String name, Armor[] initialArms, Weapon[] initialWeapons, Key[] initialKeys) {
+    public static void createPlayer(Sprite s, Sprite fs, Tile l, Room r, String name, Satchel satchel) {
         if (Player.getPlayer() == null) {
-            player = new Player(s, fs, l, r, name, initialArms, initialWeapons, initialKeys);
+            player = new Player(s, fs, l, r, name, satchel);
         }
     }
 

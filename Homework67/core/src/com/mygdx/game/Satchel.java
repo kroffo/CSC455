@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Satchel {
 
@@ -18,6 +19,20 @@ public class Satchel {
 	keys = new HashMap<String, Key>();
     }
 
+    public Satchel(ArrayList<Weapon> weapons, ArrayList<Armor> armors, ArrayList<Key> keys) {
+
+        this.weapons = new HashMap<String, Weapon>();
+	this.armors = new HashMap<String, Armor>();
+	this.keys = new HashMap<String, Key>();
+
+        for (Weapon w : weapons)
+            addWeapon(w);
+        for (Armor a : armors)
+            addArmor(a);
+        for (Key k : keys)
+            addKey(k);
+    }
+
     public Weapon[] getWeapons() {
         return weapons.values().toArray(new Weapon[weapons.size()]);
     }
@@ -28,6 +43,60 @@ public class Satchel {
 
     public Key[] getKeys() {
         return keys.values().toArray(new Key[keys.size()]);
+    }
+
+    public Armor[] getShirts() {
+        ArrayList<Armor> shirts = new ArrayList<Armor>(0);
+        for (Armor a : armors.values().toArray(new Armor[armors.size()])) {
+            if (a.getType() == Armor.Type.SHIRT)
+                shirts.add(a);
+        }
+        return shirts.toArray(new Armor[shirts.size()]);
+    }
+
+    public Armor[] getPants() {
+        ArrayList<Armor> pants = new ArrayList<Armor>(0);
+        for (Armor a : armors.values().toArray(new Armor[armors.size()])) {
+            if (a.getType() == Armor.Type.PANTS)
+                pants.add(a);
+        }
+        return pants.toArray(new Armor[pants.size()]);
+    }
+
+    public Armor[] getGloves() {
+        ArrayList<Armor> gloves = new ArrayList<Armor>(0);
+        for (Armor a : armors.values().toArray(new Armor[armors.size()])) {
+            if (a.getType() == Armor.Type.GLOVES)
+                gloves.add(a);
+        }
+        return gloves.toArray(new Armor[gloves.size()]);
+    }
+
+    public Armor[] getBoots() {
+        ArrayList<Armor> boots = new ArrayList<Armor>(0);
+        for (Armor a : armors.values().toArray(new Armor[armors.size()])) {
+            if (a.getType() == Armor.Type.BOOTS)
+                boots.add(a);
+        }
+        return boots.toArray(new Armor[boots.size()]);
+    }
+
+    public Armor[] getShields() {
+        ArrayList<Armor> shields = new ArrayList<Armor>(0);
+        for (Armor a : armors.values().toArray(new Armor[armors.size()])) {
+            if (a.getType() == Armor.Type.SHIELD)
+                shields.add(a);
+        }
+        return shields.toArray(new Armor[shields.size()]);
+    }
+
+    public Armor[] getHelmets() {
+        ArrayList<Armor> helmets = new ArrayList<Armor>(0);
+        for (Armor a : armors.values().toArray(new Armor[armors.size()])) {
+            if (a.getType() == Armor.Type.HELMET)
+                helmets.add(a);
+        }
+        return helmets.toArray(new Armor[helmets.size()]);
     }
 	
     public void addKey(Key key) {

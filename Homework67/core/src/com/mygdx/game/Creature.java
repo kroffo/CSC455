@@ -25,12 +25,13 @@ public abstract class Creature extends Occupant {
     private Armor boots;
     private Armor gloves;
     private Armor shield;
+    private Armor helmet;
     private Weapon weapon;
 
     private Sprite fightSprite;
 
     public Creature(Sprite s, Sprite fs, Tile l, String name, int startHealth, int startStrength, int startDefense,
-                    int startAgility, int startLuck, Armor[] initialArmors, Weapon[] initialWeapons, Key[] initialKeys, int speed) {
+                    int startAgility, int startLuck, Satchel satchel, int speed) {
         super(s, l);
         this.fightSprite = fs;
         this.name = name;
@@ -42,25 +43,59 @@ public abstract class Creature extends Occupant {
         this.agility = startAgility;
         this.luck = startLuck;
         this.traversalSpeed = speed;
-        satchel = new Satchel();
-        if (initialArmors != null) {
-            for (Armor a : initialArmors) {
-                addArmor(a);
-                equipArmor(a.getName());
-            }
-        }
-        if (initialWeapons != null) {
-            for (Weapon w : initialWeapons) {
-                addWeapon(w);
-                equipWeapon(w.getName());
-            }
-        }
-        if (initialKeys != null) {
-            for (Key k : initialKeys) {
-                addKey(k);
-            }
-        }
-        satchel.addKey(new Key("Wooden Key"));
+        this.satchel = satchel;
+        initializeEquipment();
+    }
+
+    private void initializeEquipment() {
+        Weapon[] weapons = satchel.getWeapons();
+        for (Weapon w : weapons)
+            if (weapon == null || w.getAttack() > weapon.getAttack())
+                weapon = w;
+        if (weapon != null)
+            equipWeapon(weapon.getName());
+        
+        Armor[] armors = satchel.getShirts();
+        for (Armor w : armors)
+            if (shirt == null || w.getDefense() > shirt.getDefense())
+                shirt = w;
+        if (shirt != null)
+            equipArmor(shirt.getName());
+
+        armors = satchel.getPants();
+        for (Armor w : armors)
+            if (pants == null || w.getDefense() > pants.getDefense())
+                pants = w;
+        if (pants != null)
+            equipArmor(pants.getName());
+
+        armors = satchel.getGloves();
+        for (Armor w : armors)
+            if (gloves == null || w.getDefense() > gloves.getDefense())
+                gloves = w;
+        if (gloves != null)
+            equipArmor(gloves.getName());
+
+        armors = satchel.getBoots();
+        for (Armor w : armors)
+            if (boots == null || w.getDefense() > boots.getDefense())
+                boots = w;
+        if (boots != null)
+            equipArmor(boots.getName());
+
+        armors = satchel.getShields();
+        for (Armor w : armors)
+            if (shield == null || w.getDefense() > shield.getDefense())
+                shield = w;
+        if (shield != null)
+            equipArmor(shield.getName());
+
+        armors = satchel.getHelmets();
+        for (Armor w : armors)
+            if (helmet == null || w.getDefense() > helmet.getDefense())
+                helmet = w;
+        if (helmet != null)
+            equipArmor(helmet.getName());
     }
 
     public abstract boolean step();
@@ -78,30 +113,51 @@ public abstract class Creature extends Occupant {
         return location;
     }
 
+    public void unequipItems() {
+        if (weapon != null)
+            weapon.unequip();
+        if (shirt != null)
+            shirt.unequip();
+        if (pants != null)
+            pants.unequip();
+        if (boots != null)
+            boots.unequip();
+        if (gloves != null)
+            gloves.unequip();
+        if (shield != null)
+            shield.unequip();
+        if (helmet != null)
+            helmet.unequip();
+    }
+
     public boolean equipArmor(String armorName) {
         Armor arm = satchel.getArmor(armorName);
         if (arm != null) {
-            String type = arm.getType();
-            if (type.equals("Shirt")) {
+            Armor.Type type = arm.getType();
+            if (type == Armor.Type.SHIRT) {
                 if (shirt != null)
                     unequipArmor(shirt.getName());
                 shirt = arm;
-            } else if (type.equals("Pants")) {
+            } else if (type == Armor.Type.PANTS) {
                 if (pants != null)
                     unequipArmor(pants.getName());
                 pants = arm;
-            } else if (type.equals("Boots")) {
+            } else if (type == Armor.Type.BOOTS) {
                 if (boots != null)
                     unequipArmor(boots.getName());
                 boots = arm;
-            } else if (type.equals("Gloves")) {
+            } else if (type == Armor.Type.GLOVES) {
                 if (gloves != null)
                     unequipArmor(gloves.getName());
                 gloves = arm;
-            } else if (type.equals("Shield")) {
+            } else if (type == Armor.Type.SHIELD) {
                 if (shield != null)
                     unequipArmor(shield.getName());
-                shield= arm;
+                shield = arm;
+            } else if (type == Armor.Type.HELMET) {
+                if (helmet != null)
+                    unequipArmor(helmet.getName());
+                helmet = arm;
             }
             arm.equip();
             defense += arm.getDefense();
@@ -115,6 +171,18 @@ public abstract class Creature extends Occupant {
         if (arm != null) {
             arm.unequip();
             defense -= arm.getDefense();
+            if (arm.getType() == Armor.Type.SHIRT)
+                shirt = null;
+            else if (arm.getType() == Armor.Type.PANTS)
+                pants = null;
+            else if (arm.getType() == Armor.Type.GLOVES)
+                gloves = null;
+            else if (arm.getType() == Armor.Type.BOOTS)
+                boots = null;
+            else if (arm.getType() == Armor.Type.SHIELD)
+                shield = null;
+            else if (arm.getType() == Armor.Type.HELMET)
+                helmet = null;
         }
     }
 
@@ -136,6 +204,7 @@ public abstract class Creature extends Occupant {
         if (weap != null) {
             weap.unequip();
             attack -= weap.getAttack();
+            weapon = null;
         }
     }
 

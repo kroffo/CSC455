@@ -47,8 +47,11 @@ public class Menu implements Selectable {
     }
 
     public void updateValues() {
-        for (int i = 0; i < selectables.length; i++)
+        for (int i = 0; i < selectables.length; i++) {
             options[i] = selectables[i].toString();
+            if (selectables[i] instanceof StatsMenu)
+                ((StatsMenu)selectables[i]).updateValues();
+        }
     }
 
     public void removeIndex(int i) {

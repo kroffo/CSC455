@@ -16,15 +16,27 @@ public class Enemy extends Creature {
         FLEE,
         CHASE,
         RANDOMSLOW,
-        RANDOMFAST
+        RANDOMFAST,
+        STATIONARY
     }
 
     public Enemy(Sprite s, Sprite fs, Tile l, String name, int startHealth, int startStrength, int startDefense, int startAgility,
-                 int startLuck, Armor[] initialArmors, Weapon[] initialWeapons, Key[] initialKeys, int speed, String race) {
-        super(s, fs, l, name, startHealth, startStrength, startDefense, startAgility, startLuck, initialArmors, initialWeapons, initialKeys, speed);
+                 int startLuck, Satchel satchel, int speed, String race, String behave) {
+        super(s, fs, l, name, startHealth, startStrength, startDefense, startAgility, startLuck, satchel, speed);
         this.race = race;
         searched = false;
-        behavior = Behavior.CHASE;
+        if (behave.equalsIgnoreCase("flee"))
+            behavior = Behavior.FLEE;
+        else if (behave.equalsIgnoreCase("chase"))
+            behavior = Behavior.CHASE;
+        else if (behave.equalsIgnoreCase("randomslow"))
+            behavior = Behavior.RANDOMSLOW;
+        else if (behave.equalsIgnoreCase("randomfast"))
+            behavior = Behavior.RANDOMFAST;
+        else if (behave.equalsIgnoreCase("stationary"))
+            behavior = Behavior.STATIONARY;
+        else
+            behavior = Behavior.RANDOMSLOW;
     }
 
     public String getRace() {
@@ -109,12 +121,12 @@ public class Enemy extends Creature {
     }
 
     public void kill() {
+        unequipItems();
         location.removeOccupant();
-        Chest c = new Chest(sprite, location, getName() + "'s Satchel", false, null);
+        Chest c = new Chest(sprite, location, getName() + "'s Satchel", false, null, satchel);
         location.setOccupant(c);
         location.getRoom().removeOccupant(this);
         location.getRoom().addOccupant(c);
         c.fixPosition();
-    }
-    
+    }    
 }
