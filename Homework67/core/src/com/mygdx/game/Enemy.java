@@ -55,19 +55,7 @@ public class Enemy extends Creature {
                 transitioning = false;
                 sprite.setPosition(location.getSprite().getX(), location.getSprite().getY());
             }
-        } else if (behavior == Behavior.FLEE) {
-            Sprite pSprite = Player.getPlayer().getLocation().getSprite();
-            Vector2 playerPosition = new Vector2(pSprite.getX(), pSprite.getY());
-            int targetNeighbor = location.getFurthestAvailableNeighbor(playerPosition);
-            if (targetNeighbor != -1)
-                location.moveOccupant(targetNeighbor);                  
-        } else if (behavior == Behavior.CHASE) {
-            Sprite pSprite = Player.getPlayer().getLocation().getSprite();
-            Vector2 playerPosition = new Vector2(pSprite.getX(), pSprite.getY());
-            int targetNeighbor = location.getNextPursuitTile(Player.getPlayer().getLocation());
-            if (targetNeighbor != -1 && location.neighborAvailable(targetNeighbor))
-                location.moveOccupant(targetNeighbor);                  
-        } else if (behavior == Behavior.RANDOMSLOW) {
+        } else if (behavior == Behavior.RANDOMSLOW || Player.getPlayer().getRoom() != location.getRoom()) {
             Random r = new Random();
             if (r.nextInt(10000) < ++randomCycles) {
                 randomCycles = 0;
@@ -95,12 +83,38 @@ public class Enemy extends Creature {
                     this.setOrientation(neighborIndex - 4);
                 }
             }
+        } else if (behavior == Behavior.FLEE) {
+            Sprite pSprite = Player.getPlayer().getLocation().getSprite();
+            Vector2 playerPosition = new Vector2(pSprite.getX(), pSprite.getY());
+            int targetNeighbor = location.getFurthestAvailableNeighbor(playerPosition);
+            if (targetNeighbor != -1) {
+                this.setOrientation(targetNeighbor);
+                location.moveOccupant(targetNeighbor);
+            }
+        } else if (behavior == Behavior.CHASE) {
+            Sprite pSprite = Player.getPlayer().getLocation().getSprite();
+            Vector2 playerPosition = new Vector2(pSprite.getX(), pSprite.getY());
+            int targetNeighbor = location.getNextPursuitTile(Player.getPlayer().getLocation());
+            if (targetNeighbor != -1) {
+                this.setOrientation(targetNeighbor);
+                if (location.neighborAvailable(targetNeighbor))
+                    location.moveOccupant(targetNeighbor);
+            }
         }
         return !transitioning;
     }
 	
     public void searched() {
         searched = true;
+    }
+
+    public void kill() {
+        location.removeOccupant();
+        Chest c = new Chest(sprite, location, getName() + "'s Satchel", false, null);
+        location.setOccupant(c);
+        location.getRoom().removeOccupant(this);
+        location.getRoom().addOccupant(c);
+        c.fixPosition();
     }
     
 }

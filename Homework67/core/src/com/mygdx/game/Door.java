@@ -49,8 +49,12 @@ public class Door {
         return locked;
     }
 	
-    public void unlock() {
-        locked = false;
+    public boolean unlock(Key k) {
+        if (k.getName().equals(correctKey.getName())) {
+            locked = false;
+            return true;
+        }
+        return false;
     }
 	
     public Room getNeighbor(Room current) {

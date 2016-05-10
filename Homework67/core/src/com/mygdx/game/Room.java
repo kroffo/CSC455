@@ -11,6 +11,7 @@ public class Room {
 
     private Tile[][] tiles = new Tile[9][7];
     private ArrayList<Occupant> occupants = new ArrayList<Occupant>(0);
+    private ArrayList<Room> neighboringRooms = new ArrayList<Room>(0);
     
     public Room(String tile_image_name, float width, float height) {
         initializeTiles(tile_image_name, width, height);
@@ -93,6 +94,7 @@ public class Room {
 
     public void addDoor(Door d, int x, int y, int direction) {
         tiles[x][y].setDoor(d, direction);
+        neighboringRooms.add(d.getNeighbor(this));
     }
 
     public Player addPlayer(String imageName, String fightImageName, int x, int y, String name) {
@@ -186,6 +188,10 @@ public class Room {
 
     public void addOccupant(Occupant o) {
         occupants.add(o);
+    }
+
+    public Room[] getNeighboringRooms() {
+        return neighboringRooms.toArray(new Room[neighboringRooms.size()]);
     }
 
     public void draw(SpriteBatch batch) {

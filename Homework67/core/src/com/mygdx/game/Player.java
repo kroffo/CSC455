@@ -14,7 +14,9 @@ public class Player extends Creature {
         FIGHT,
         EXAMINE,
         DOOR,
-        PEEK
+        CHEST,
+        PEEK,
+        GAMEOVER
     }
     
     private static Player player;
@@ -25,14 +27,15 @@ public class Player extends Creature {
     private Room peekRoom;
     private int peekFrames;
     private Chest lootChest;
+    private Chest lockedChest;
     private Enemy examinee;
     private Door door;
+    private String fightOption;
 
     private Player(Sprite s, Sprite fs, Tile l, Room r, String name, Armor[] initialArms, Weapon[] initialWeapons, Key[] initialKeys) {
         super(s, fs, l, name, 10, 4, 2, 20, 20, initialArms, initialWeapons, initialKeys, 2);
         room = r;
         initialArms = null;
-        lootChest = null;
         orientation = 0;
     }
 
@@ -117,6 +120,20 @@ public class Player extends Creature {
         return door;
     }
 
+    public void examineChest(Chest c) {
+        lockedChest = c;;
+        state = State.CHEST;
+    }
+
+    public void removeChest() {
+        lockedChest = null;;
+        state = State.PLAY;
+    }
+    
+    public Chest getChest() {
+        return lockedChest;
+    }
+
     public void startFight() {
         if (examinee == null)
             state = State.PLAY;
@@ -145,8 +162,8 @@ public class Player extends Creature {
                 boolean doorUnlocked = false;
                 if (door.isLocked()) {
                     if (satchel.containsKey(door.getCorrectKeyName())) {
-                        door.unlock();
-                        satchel.removeKey(door.getCorrectKeyName());
+                        Key k = satchel.removeKey(door.getCorrectKeyName());
+                        door.unlock(k);
                         doorUnlocked = true;
                     }
                 } else {
@@ -167,8 +184,8 @@ public class Player extends Creature {
                 boolean doorUnlocked = false;
                 if (door.isLocked()) {
                     if (satchel.containsKey(door.getCorrectKeyName())) {
-                        door.unlock();
-                        satchel.removeKey(door.getCorrectKeyName());
+                        Key k = satchel.removeKey(door.getCorrectKeyName());
+                        door.unlock(k);
                         doorUnlocked = true;
                     }
                 } else {
@@ -181,6 +198,20 @@ public class Player extends Creature {
                 } else {
                     state = State.PLAY;
                 }
+            }
+        } else if (state == State.CHEST) {
+            if (m.toString().equalsIgnoreCase("Unlock")) {
+                boolean chestUnlocked = false;
+                if (lockedChest.isLocked()) {
+                    if (satchel.containsKey(lockedChest.getCorrectKeyName())) {
+                        Key k = satchel.removeKey(lockedChest.getCorrectKeyName());
+                        lockedChest.unlock(k);
+                        chestUnlocked = true;
+                    }
+                } else {
+                    chestUnlocked = true;
+                }
+                state = State.PLAY;
             }
         }
     }
@@ -203,7 +234,7 @@ public class Player extends Creature {
     }
 
     public Room getPeekRoom() {
-        if (++peekFrames == 100) {
+        if (++peekFrames == 300) {
             state = State.PLAY;
         }
         return peekRoom;
@@ -231,4 +262,23 @@ public class Player extends Creature {
         return wins/5 + 1;
     }
     
+    public void selectFightOption(String name) {
+        fightOption = name;
+    }
+
+    public void resetFightOption() {
+        fightOption = null;
+    }
+
+    public String getFightOption() {
+        return fightOption;
+    }
+
+    public int addWin() {
+        if (++wins % 5 == 0) {
+            levelUp();
+        }
+        increaseHealth(examinee.getMaxHealth()/10);
+        return wins;
+    }
 }

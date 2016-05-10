@@ -38,6 +38,10 @@ public class Occupant {
         }
         return true;            
     }
+
+    public void fixPosition() {
+        sprite.setPosition(location.getSprite().getX(), location.getSprite().getY());
+    }
     
     public void draw(SpriteBatch batch) {
         sprite.draw(batch);

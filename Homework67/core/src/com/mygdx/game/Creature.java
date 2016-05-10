@@ -17,6 +17,7 @@ public abstract class Creature extends Occupant {
     private int defense;
     private int agility;
     private int luck;
+    private boolean stumbled;
 
     /* Equipped items */
     private Armor shirt;
@@ -59,6 +60,7 @@ public abstract class Creature extends Occupant {
                 addKey(k);
             }
         }
+        satchel.addKey(new Key("Wooden Key"));
     }
 
     public abstract boolean step();
@@ -167,7 +169,7 @@ public abstract class Creature extends Occupant {
 		
     public int getDefense() {
         return defense;
-    }	
+    }
 	
     public int getAgility() {
         return agility;
@@ -175,6 +177,19 @@ public abstract class Creature extends Occupant {
 	
     public int getLuck() {
         return luck;
+    }
+    
+    protected void levelUp() {
+        attack += 5;
+        defense += 5;
+        strength += 5;
+        agility += 3;
+        luck += 2;
+    }
+
+    protected void increaseHealth(int h) {
+        maxHealth += h;
+        health = maxHealth;
     }
 		
     public void addWeapon(Weapon weap) {
@@ -244,5 +259,43 @@ public abstract class Creature extends Occupant {
 	
     public boolean isDead() {
         return health <= 0;
+    }
+
+    public String generateAttackString(int damage, boolean criticalHit) {
+        String rv = name + " attacks with the " + getEquippedWeaponName() + " dealing ";
+        if (criticalHit) {
+            rv = rv + "a critical hit worth ";
+        }
+        rv = rv + damage + " damage!";
+        return rv;
+    }
+
+    public String generateBlockString(boolean block) {
+        if (block)
+            return name + " prepares to take a hit.";
+        else
+            return name + " prepares to take a hit, but is too weak to hold the enemy back!";
+    }
+
+    public String generateFleeString() {
+        return name + " flees the battle!";
+    }
+
+    public String stumble() {
+        stumbled = true;
+        return name + " stumbles to the ground!";
+    }
+
+    public String unstumble() {
+        stumbled = false;
+        return name + " gets up and is ready to fight!";
+    }
+
+    public boolean stumbled() {
+        return stumbled;
+    }
+
+    public Sprite getFightSprite() {
+        return fightSprite;
     }
 }
